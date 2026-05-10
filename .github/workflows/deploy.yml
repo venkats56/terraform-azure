@@ -1,8 +1,9 @@
 name: Terraform Azure Deploy
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v1.*'
+      - 'v2.*'
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -13,7 +14,7 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
     defaults:
       run:
-        working-directory: terraform
+        working-directory: terraform/${{ env.TF_DIR }}
 
     steps:
       - name: Checkout Code
@@ -26,15 +27,26 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+      - name: Select Terraform Version
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == v1.* ]]; then
+            echo "TF_DIR=v1" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF_NAME}" == v2.* ]]; then
+            echo "TF_DIR=v2" >> $GITHUB_ENV
+          fi
 
       - name: Terraform Init
+        working-directory: terraform/${{ env.TF_DIR }}
         run: terraform init
 
       - name: Terraform Validate
+        working-directory: terraform/${{ env.TF_DIR }}
         run: terraform validate
 
       - name: Terraform Plan
+        working-directory: terraform/${{ env.TF_DIR }}
         run: terraform plan -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}"
 
       - name: Terraform Apply
+        working-directory: terraform/${{ env.TF_DIR }}
         run: terraform apply -auto-approve -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}"
