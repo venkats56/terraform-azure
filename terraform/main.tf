@@ -25,6 +25,6 @@ provider "azurerm" {
 variable "subscription_id" {}
 
 resource "azurerm_resource_group" "demo" {
-  name     = "rg-githubactions-demo"
+  name     = "rg-githubactions-demo1"
   location = "Central India"
 }
