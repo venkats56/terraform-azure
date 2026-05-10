@@ -1,5 +1,11 @@
 terraform {
   required_version = ">= 1.5.0"
+    backend "azurerm" {
+    resource_group_name  = "ml2568"
+    storage_account_name = "terraformrgazure"
+    container_name       = "terraform-state"
+    key                  = "terraform.tfstate"
+  }
 
   required_providers {
     azurerm = {
