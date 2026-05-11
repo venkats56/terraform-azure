@@ -1,0 +1,13 @@
+name: Deploy V1
+
+on:
+  push:
+    tags:
+      - 'v1.*'
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-terraform.yml
+    with:
+      tf_directory: terraform/v1
+    secrets: inherit
