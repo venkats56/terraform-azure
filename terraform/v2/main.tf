@@ -22,8 +22,6 @@ provider "azurerm" {
   resource_provider_registrations = "none"
 }
 
-variable "subscription_id" {}
-
 module "resource_group" {
   source = "../modules/resource_group"
 
