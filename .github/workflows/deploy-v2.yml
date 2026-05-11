@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    uses: ./.github/workflows/reusable-terraform.yml
+    uses: venkats56/terraform-azure/.github/workflows/reusable-terraform.yml@main
     with:
       tf_directory: terraform/v2
     secrets: inherit
