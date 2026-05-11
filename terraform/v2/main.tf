@@ -5,7 +5,7 @@ terraform {
     resource_group_name  = "ml2568"
     storage_account_name = "terraformrgazure"
     container_name       = "terraform-state"
-    key                  = "v2.tfstate"
+    key                  = "v3.tfstate"
   }
 
   required_providers {
