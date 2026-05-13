@@ -12,8 +12,16 @@ param projectName string
 @description('Common tags')
 param tags object
 
-var storageAccountName = 'st${uniqueString(resourceGroup().id, environment)}'
-var keyVaultName = 'kv-${environment}-${uniqueString(resourceGroup().id)}'
+/*
+========================================
+Variables
+========================================
+*/
+
+var storageAccountName = toLower('st${uniqueString(resourceGroup().id, environment)}')
+
+var keyVaultName = toLower('kv-${uniqueString(resourceGroup().id)}')
+
 var logAnalyticsName = 'log-${environment}-${projectName}'
 
 /*
@@ -29,6 +37,7 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
 
   properties: {
     retentionInDays: 30
+
     features: {
       searchVersion: 1
     }
@@ -51,7 +60,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   tags: tags
 
   sku: {
-    name: 'Standard_LRS'
+    name: 'Standard_ZRS'
   }
 
   kind: 'StorageV2'
@@ -108,6 +117,11 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     enablePurgeProtection: true
 
     publicNetworkAccess: 'Disabled'
+
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+    }
   }
 }
 
@@ -118,5 +132,7 @@ Outputs
 */
 
 output storageAccountName string = storage.name
+
 output keyVaultName string = keyVault.name
+
 output logAnalyticsName string = logAnalytics.name
