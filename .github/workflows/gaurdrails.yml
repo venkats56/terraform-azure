@@ -1,0 +1,93 @@
+name: Azure-Bicep-Guardrails
+
+on:
+
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  validate:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+
+    # ---------------------------------------
+    # Checkout Repository
+    # ---------------------------------------
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # ---------------------------------------
+    # Azure Login
+    # ---------------------------------------
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # ---------------------------------------
+    # Install Azure CLI Bicep
+    # ---------------------------------------
+    - name: Install Bicep
+      run: az bicep install
+
+    # ---------------------------------------
+    # Validate Bicep Build
+    # ---------------------------------------
+    - name: Validate Bicep
+      run: |
+        az bicep build \
+          --file infra/main.bicep
+
+    # ---------------------------------------
+    # Install Checkov
+    # ---------------------------------------
+    - name: Install Checkov
+      run: |
+        pip install checkov
+
+    # ---------------------------------------
+    # Run Checkov Scan
+    # ---------------------------------------
+    - name: Run Checkov
+      run: |
+        checkov \
+          -d infra \
+          --framework bicep
+
+    # ---------------------------------------
+    # Install PSRule
+    # ---------------------------------------
+    - name: Install PSRule
+      shell: pwsh
+      run: |
+        Install-Module PSRule.Rules.Azure -Force -Scope CurrentUser
+
+    # ---------------------------------------
+    # Run PSRule Validation
+    # ---------------------------------------
+    - name: Run PSRule
+      shell: pwsh
+      run: |
+        Invoke-PSRule -InputPath infra
+
+    # ---------------------------------------
+    # What-If Deployment
+    # ---------------------------------------
+    - name: What-If Deployment
+      run: |
+        az deployment group what-if \
+          --resource-group rg-demo \
+          --template-file infra/main.bicep \
+          --parameters infra/parameters/dev.bicepparam
