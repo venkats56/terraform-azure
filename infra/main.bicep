@@ -48,13 +48,13 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   properties: {
     retentionInDays: 30
 
+    sku: {
+      name: 'PerGB2018'
+    }
+
     features: {
       searchVersion: 1
     }
-  }
-
-  sku: {
-    name: 'PerGB2018'
   }
 }
 
