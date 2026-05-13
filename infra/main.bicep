@@ -14,13 +14,21 @@ param tags object
 
 /*
 ========================================
+Storage Account Name
+========================================
+*/
+
+@description('Storage Account Name')
+@maxLength(24)
+param storageAccountName string = 'stguardrailsdev001'
+
+/*
+========================================
 Variables
 ========================================
 */
 
-var storageAccountName = toLower('st${uniqueString(resourceGroup().id, environment)}')
-
-var keyVaultName = toLower('kv-${uniqueString(resourceGroup().id)}')
+var keyVaultName = toLower('kv-${environment}-001')
 
 var logAnalyticsName = 'log-${environment}-${projectName}'
 
@@ -32,7 +40,9 @@ Log Analytics Workspace
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: logAnalyticsName
+
   location: location
+
   tags: tags
 
   properties: {
@@ -56,11 +66,13 @@ Storage Account
 
 resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
+
   location: location
+
   tags: tags
 
   sku: {
-    name: 'Standard_ZRS'
+    name: 'Standard_GRS'
   }
 
   kind: 'StorageV2'
@@ -91,7 +103,9 @@ Key Vault
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   name: keyVaultName
+
   location: location
+
   tags: tags
 
   properties: {
@@ -131,8 +145,8 @@ Outputs
 ========================================
 */
 
-output storageAccountName string = storage.name
+output storageAccountNameOutput string = storage.name
 
-output keyVaultName string = keyVault.name
+output keyVaultNameOutput string = keyVault.name
 
-output logAnalyticsName string = logAnalytics.name
+output logAnalyticsNameOutput string = logAnalytics.name
