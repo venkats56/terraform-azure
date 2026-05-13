@@ -20,7 +20,7 @@ Storage Account Name
 
 @description('Storage Account Name')
 @maxLength(24)
-param storageAccountName string = 'stguardrailsdev001'
+param storageAccountName string = 'stguardrailsdev2568'
 
 /*
 ========================================
@@ -28,7 +28,7 @@ Variables
 ========================================
 */
 
-var keyVaultName = toLower('kv-${environment}-001')
+var keyVaultName = toLower('kv-${environment}-2568')
 
 var logAnalyticsName = 'log-${environment}-${projectName}'
 
